@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+
+
+{% block app %}
+<div>
+	{% include "/partials/side_bar.html" %}
+
+	<main id="content" class="main">
+		{% block content %}{% endblock %}
+	</main>
+</div>
+{% endblock %}

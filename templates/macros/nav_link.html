@@ -1,0 +1,4 @@
+{% macro nav_link(link) %}
+<a class="{{ link.style }}" hx-push-url="true" hx-trigger="click" hx-get="{{ link.url }}" hx-target="#content">{{
+	link.text }}</a>
+{% endmacro %}
