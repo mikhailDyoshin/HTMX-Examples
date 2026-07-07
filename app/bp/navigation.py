@@ -1,9 +1,15 @@
 from flask import Blueprint
 
-
-from app.navigation.utils import register_navigation_routes
+from app.navigation.types import Page
+from app.navigation.utils import register_pages
 
 
 bp = Blueprint("navigation", __name__, url_prefix="")
 
-register_navigation_routes(bp)
+
+PAGES = (
+    Page("/", "Home", "partials/home.html"),
+    Page("/settings", "Settings", "partials/settings.html"),
+    Page("/users", "Users", "partials/users.html"),
+)
+register_pages(bp, PAGES)

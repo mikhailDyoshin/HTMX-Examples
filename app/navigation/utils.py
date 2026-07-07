@@ -1,52 +1,51 @@
 from flask import Blueprint, render_template, request
 from .types import Page
-from .pages import PAGES
 from flask.typing import RouteCallable
 
 
-def is_hx_request() -> bool:
+def _is_hx_request() -> bool:
     return bool(request.headers.get("HX-Request"))
 
 
-def navigation_oob_template(active_page: Page) -> str:
+def _navigation_oob_template(active_page: Page, pages: tuple[Page, ...]) -> str:
     return render_template(
-        "navigation/navigation_oob.html", pages=PAGES, active_page=active_page
+        "navigation/navigation_oob.html", pages=pages, active_page=active_page
     )
 
 
-def render_page(page: Page) -> str:
+def _render_page(page: Page, pages: tuple[Page, ...]) -> str:
     return render_template(
         "/page.html",
         content_template=page.template,
         content_data=page.context,
-        pages=PAGES,
+        pages=pages,
         active_page=page,
     )
 
 
-def render_partial(page: Page) -> str:
-    return render_template(page.template, data=page.context) + navigation_oob_template(
-        page
+def _render_partial(page: Page, pages: tuple[Page, ...]) -> str:
+    return render_template(page.template, data=page.context) + _navigation_oob_template(
+        page, pages
     )
 
 
-def render(page: Page) -> str:
-    if is_hx_request():
-        return render_partial(page)
-    return render_page(page)
+def _render(page: Page, pages: tuple[Page, ...]) -> str:
+    if _is_hx_request():
+        return _render_partial(page, pages)
+    return _render_page(page, pages)
 
 
-def page_view(page: Page) -> RouteCallable:
+def _page_view(page: Page, pages: tuple[Page, ...]) -> RouteCallable:
     def view():
-        return render(page)
+        return _render(page, pages)
 
     return view
 
 
-def register_navigation_routes(navigation_blueprint: Blueprint):
-    for p in PAGES:
+def register_pages(navigation_blueprint: Blueprint, pages: tuple[Page, ...]):
+    for p in pages:
         navigation_blueprint.add_url_rule(
             rule=p.url,
             endpoint=p.title.lower(),
-            view_func=page_view(p),
+            view_func=_page_view(p, pages),
         )
