@@ -3,5 +3,8 @@
 
 {% block page %}
 	{% include "/partials/side_bar.html" %}
-	{% include "/partials/content.html" %}
+
+	<main id="content" class="content">
+		{% include "/navigation/content.html" %}
+	</main>
 {% endblock %}
