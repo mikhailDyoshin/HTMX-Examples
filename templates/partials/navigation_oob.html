@@ -1,5 +1,5 @@
 {% from "macros/navigation.html" import navigation %}
 
 <div id="navigation" hx-swap-oob="outerHTML">
-	{{ navigation(navigation_data) }}
+	{% include "/partials/navigation.html" %}
 </div>

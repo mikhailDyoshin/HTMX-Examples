@@ -1,9 +1,7 @@
 {% from "macros/nav_link.html" import nav_link %}
 
-{% macro navigation(data) %}
-<div class="navigation">
-	{% for i in data %}
-	{{ nav_link(i) }}
+{% macro navigation(pages, active_page) %}
+	{% for p in pages %}
+	  {{ nav_link(p, active_page) }}
 	{% endfor %}
-</div>
 {% endmacro %}
