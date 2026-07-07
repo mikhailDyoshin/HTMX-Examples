@@ -1,8 +1,8 @@
 {% from "macros/nav_link.html" import nav_link %}
 
 {% macro navigation(data) %}
-<div class={{ data.style }}>
-	{% for i in data.items %}
+<div class="navigation">
+	{% for i in data %}
 	{{ nav_link(i) }}
 	{% endfor %}
 </div>

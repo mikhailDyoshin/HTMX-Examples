@@ -2,10 +2,15 @@ from typing import Any
 
 from flask import Blueprint, Request, render_template, request
 from dataclasses import dataclass
-from app.utils import is_hx_request, name_to_path
-from enum import Enum, StrEnum
+from enum import Enum
+
+from flask.typing import RouteCallable
+
 
 bp = Blueprint("navigation", __name__, url_prefix="")
+
+PARTIALS_DIR = "/partials"
+NAVIGATION_TEMPLATE = f"{PARTIALS_DIR}/side_bar.html"
 
 
 @dataclass(frozen=True)
@@ -16,30 +21,48 @@ class NavigationLink:
 
 
 @dataclass(frozen=True)
-class Navigation:
-    style: str
-    items: tuple[NavigationLink, ...]
-
-
-class NavigationUrl(StrEnum):
-    HOME = "/"
-    SETTINGS = "/settings"
+class NavigationRoute:
+    url: str
+    link_text: str
 
 
 @dataclass(frozen=True)
-class NavigationRouteData:
-    url: str
-    link_text: str
-    template_name: str
+class Partial:
+    template: str
+    data: Any
 
 
-class NavigationRoute(Enum):
-    HOME = NavigationRouteData(
-        url=NavigationUrl.HOME, link_text="Home", template_name="home"
+@dataclass(frozen=True)
+class Page:
+    navigation: Partial
+    content: Partial
+
+
+def partial_template(name: str) -> str:
+    return f"partials/{name}.html"
+
+
+class Pages(Enum):
+    HOME = Page(
+        navigation=Partial(NAVIGATION_TEMPLATE, NavigationRoute("/", "Home")),
+        content=Partial(partial_template("home"), None),
     )
-    SETTINGS = NavigationRouteData(
-        url=NavigationUrl.SETTINGS, link_text="Settings", template_name="settings"
+    SETTINGS = Page(
+        navigation=Partial(
+            NAVIGATION_TEMPLATE,
+            NavigationRoute("/settings", "Settings"),
+        ),
+        content=Partial(partial_template("settings"), None),
     )
+
+
+NAVIGATION_ROUTES: tuple[NavigationRoute, ...] = tuple(
+    [p.value.navigation.data for p in Pages]
+)
+
+
+def is_hx_request(request: Request) -> bool:
+    return bool(request.headers.get("HX-Request"))
 
 
 def nav_link(
@@ -47,53 +70,54 @@ def nav_link(
 ) -> NavigationLink:
     style = "active" if selected_item is current_item else ""
     return NavigationLink(
-        url=current_item.value.url,
-        text=current_item.value.link_text,
-        style=" ".join(("", style)),
+        url=current_item.url,
+        text=current_item.link_text,
+        style=" ".join(("", style)).strip(),
     )
 
 
 def navigation_links(active: NavigationRoute) -> tuple[NavigationLink, ...]:
-    return tuple([nav_link(i, active) for i in NavigationRoute])
+    return tuple([nav_link(i, active) for i in NAVIGATION_ROUTES])
 
 
-def navigation_data(active_menu_item: NavigationRoute) -> Navigation:
-    return Navigation(
-        items=navigation_links(active_menu_item),
-        style="",
-    )
-
-
-def navigation_template(active_menu_item: NavigationRoute) -> str:
+def navigation_oob_template(active_menu_item: NavigationRoute) -> str:
     return render_template(
         "/partials/navigation_oob.html",
-        navigation_data=navigation_data(active_menu_item),
+        navigation_data=navigation_links(active_menu_item),
     )
 
 
-def render_page(
-    request: Request,
-    active_menu_item: NavigationRoute,
-    template_name: str,
-    page_data: Any,
-) -> str:
-    if is_hx_request(request):
-        return render_template(
-            name_to_path(template_name), data=page_data
-        ) + navigation_template(active_menu_item)
+def render_page(page: Pages) -> str:
     return render_template(
         "/page.html",
-        path_to_partial=name_to_path(template_name),
-        page_data=page_data,
-        navigation_data=navigation_data(active_menu_item),
+        content_template=page.value.content.template,
+        content_data=page.value.content.data,
+        navigation_data=navigation_links(page.value.navigation.data),
     )
 
 
-@bp.route(NavigationUrl.HOME)
-def home():
-    return render_page(request, NavigationRoute.HOME, "home", None)
+def render_partial(page: Pages) -> str:
+    return render_template(
+        page.value.content.template, data=page.value.content.data
+    ) + navigation_oob_template(page.value.navigation.data)
 
 
-@bp.route(NavigationUrl.SETTINGS)
-def settings():
-    return render_page(request, NavigationRoute.SETTINGS, "settings", None)
+def render(request: Request, page: Pages) -> str:
+    if is_hx_request(request):
+        return render_partial(page)
+    return render_page(page)
+
+
+def page_view(page: Pages) -> RouteCallable:
+    def view():
+        return render(request, page)
+
+    return view
+
+
+for p in Pages:
+    bp.add_url_rule(
+        rule=p.value.navigation.data.url,
+        endpoint=p.name.lower(),
+        view_func=page_view(p),
+    )

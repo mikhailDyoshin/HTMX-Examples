@@ -1,6 +1,7 @@
-{% extends "app.html" %}
+{% extends "base.html" %}
 
 
-{% block content %}
-{% include path_to_partial %}
+{% block page %}
+	{% include "/partials/side_bar.html" %}
+	{% include "/partials/content.html" %}
 {% endblock %}
