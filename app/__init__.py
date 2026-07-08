@@ -1,7 +1,7 @@
 import os
 from typing import Any, Dict
 from flask import Flask
-from app.bp import navigation
+from app.bp import navigation, infinite_scroll
 
 
 def create_app(test_config: Dict[str, Any] | None = None) -> Flask:
@@ -14,6 +14,7 @@ def create_app(test_config: Dict[str, Any] | None = None) -> Flask:
     )
 
     app.register_blueprint(navigation.bp)
+    app.register_blueprint(infinite_scroll.bp)
 
     app.config.from_mapping(
         SECRET_KEY="dev",

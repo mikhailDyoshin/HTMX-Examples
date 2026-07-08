@@ -11,5 +11,6 @@ PAGES = (
     Page("/", "Home", "partials/home.html"),
     Page("/settings", "Settings", "partials/settings.html"),
     Page("/users", "Users", "partials/users.html"),
+    Page("/scroll", "Scroll", "infinite_scroll/list.html"),
 )
 register_pages(bp, PAGES)

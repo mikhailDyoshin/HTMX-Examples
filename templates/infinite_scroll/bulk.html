@@ -1,0 +1,6 @@
+
+{% from "infinite_scroll/macros/list_item.html" import list_item %}
+
+{% for i in items %}
+	{{ list_item(i) }}
+{% endfor %}

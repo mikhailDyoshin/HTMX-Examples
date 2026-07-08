@@ -48,11 +48,15 @@ body {
 	flex-direction: column;
 	align-items: center;
 	justify-content: center;
-	padding: 15px 20px 15px 0;
-	/* margin: 10px; */
+	/* padding: 15px 20px 15px 0; */
 	border-radius: 20px;
 	background-color: transparent;
 	width: 100%;
 	height: 100%;
 	/* box-shadow: 0 0px 4px #00000024; */
+}
+
+.scroll {
+	overflow-y: auto;
+	scrollbar-gutter: stable;
 }
