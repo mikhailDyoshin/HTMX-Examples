@@ -1,0 +1,58 @@
+:root {
+	--primary: #f6f6f6;
+	--primary-rgb: 255, 255, 255;
+	--secondary: #333333b3;
+	--accent: #036aff;
+	--accent-hover: #025bdd;
+	--text-color: #141414;
+	--text-color-secondary: #a1a1a1;
+	--gradient-end: #EBCEE9;
+	--gradient-start: #CCE0F2;
+	--accent-secondary: #9A1C1C;
+	--accent-secondary-light: #ffb1b1;
+	--top-bar-gradient-start: #8BAEC4;
+	--top-bar-gradient-end: #C295BE;
+	--top-bar-border-radius: 0px;
+
+	--gray-text: #333333b3;
+
+	--bg-alpha: 0.6;
+	--bg-color: rgba(var(--primary-rgb), var(--bg-alpha));
+
+	--body-common-padding: 40px;
+	--body-top-padding: 20px;
+
+	--fragment-border-radius: 20px;
+
+	--main-container-border-radius: 25px;
+}
+
+
+body {
+	font-family: "Nunito", sans-serif;
+	background: #f6f6f6;
+	margin: 0;
+	padding: 0;
+	height: 100vh;
+}
+
+.app {
+	display: flex;
+	flex-direction: row;
+	align-items: flex-start;
+	height: 100%;
+}
+
+.content {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	padding: 15px 20px 15px 0;
+	/* margin: 10px; */
+	border-radius: 20px;
+	background-color: transparent;
+	width: 100%;
+	height: 100%;
+	/* box-shadow: 0 0px 4px #00000024; */
+}

@@ -1,5 +1,5 @@
 {% macro nav_link(page, active_page) %}
-<a class="nav-link {{ 'active' if page.url == active_page.url else '' }}" hx-push-url="true" hx-trigger="click"
+<a class="nav_link {{ 'active' if page.url == active_page.url else '' }}" hx-push-url="true" hx-trigger="click"
 	hx-get="{{ page.url }}" hx-target="#content">
 	{{page.title }}
 </a>

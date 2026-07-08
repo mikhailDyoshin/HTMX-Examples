@@ -1,0 +1,26 @@
+.navigation {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	justify-content: flex-start;
+	gap: 10px;
+	padding-top: 10px;
+	padding-left: 10px;
+	width: 100%;
+	flex-grow: 1;
+}
+
+.nav_link {
+	cursor: pointer;
+	color: var(--secondary);
+	transition: all 0.2s ease-in;
+}
+
+.nav_link.active {
+	color: black;
+	font-weight: bold;
+}
+
+.nav_link:hover {
+	color: black;
+}
