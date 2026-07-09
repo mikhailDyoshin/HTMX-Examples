@@ -1,0 +1,8 @@
+{% from "/macros/list_item.html" import list_item_macro %}
+
+
+<div id="{{ list.id }}" class="{{ list.style }}">
+	{% for i in list.items %}
+	{{ list_item_macro(i) }}
+	{% endfor %}
+</div>

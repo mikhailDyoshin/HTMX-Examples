@@ -1,0 +1,4 @@
+{% macro list_item_macro(item) %}
+{% set data = item.data %}
+{% include item.template %}
+{% endmacro %}
