@@ -19,7 +19,6 @@ inputs: HtmlList[HtmlInput] = HtmlList(
 
 @bp.get("/")
 def get_inputs():
-    print("Inputs")
     return render_template(
         "/macros/list.html",
         list=inputs,

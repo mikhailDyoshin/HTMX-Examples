@@ -14,5 +14,6 @@ PAGES = (
     Page("/scroll", "Scroll", "infinite_scroll/list.html"),
     Page("/search", "Search", "search/search.html"),
     Page("/inputs", "Inputs", "partials/inputs.html"),
+    Page("/progress_bar", "ProgressBar", "progress_bar/start_button.html"),
 )
 register_pages(bp, PAGES)

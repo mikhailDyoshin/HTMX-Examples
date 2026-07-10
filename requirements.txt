@@ -1,5 +1,6 @@
 alembic==1.16.5
 annotated-types==0.7.0
+asgiref==3.11.1
 blinker==1.9.0
 cachelib==0.13.0
 certifi==2026.4.22
@@ -10,6 +11,7 @@ Flask-Migrate==4.1.0
 Flask-Session==0.8.0
 Flask-SQLAlchemy==3.1.1
 greenlet==3.2.4
+h11==0.16.0
 idna==3.13
 iniconfig==2.3.0
 itsdangerous==2.2.0
@@ -30,4 +32,5 @@ SQLAlchemy==2.0.43
 typing-inspection==0.4.2
 typing_extensions==4.15.0
 urllib3==2.7.0
+uvicorn==0.51.0
 Werkzeug==3.1.3

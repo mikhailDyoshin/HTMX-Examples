@@ -1,0 +1,7 @@
+<div hx-trigger="done" hx-get="/progress_bar/end" hx-swap="outerHTML" hx-target="this">
+	<h3 role="status" id="pblabel" tabindex="-1" autofocus>Running</h3>
+
+	<div hx-get="/progress_bar/progress" hx-trigger="every 600ms" hx-target="this" hx-swap="innerHTML">
+	</div>
+
+</div>
