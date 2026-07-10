@@ -1,0 +1,5 @@
+<div class={{ data.style }}>
+	<label>{{ data.label }}</label>
+	<input {% if data.attrs %}{% for key, value in data.attrs.items() %} {{ key }}="{{ value }}" {% endfor %}{%
+		endif %} value={{ data.value }}>
+</div>

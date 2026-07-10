@@ -2,7 +2,7 @@ from typing import List
 
 from flask import Blueprint, render_template, request
 
-from app.html_list import HtmlList, ListItems
+from app.html_list import HtmlList, View
 
 
 bp = Blueprint("search", __name__, url_prefix="/search")
@@ -19,9 +19,9 @@ DATA = (
 )
 
 
-def search_result(substing: str) -> List[ListItems[str]]:
+def search_result(substing: str) -> List[View[str]]:
     return [
-        ListItems(s, "/search/list_item.html")
+        View(s, "/search/list_item.html")
         for s in DATA
         if (substing.lower() in s.lower())
     ]

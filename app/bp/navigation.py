@@ -13,5 +13,6 @@ PAGES = (
     Page("/users", "Users", "partials/users.html"),
     Page("/scroll", "Scroll", "infinite_scroll/list.html"),
     Page("/search", "Search", "search/search.html"),
+    Page("/inputs", "Inputs", "partials/inputs.html"),
 )
 register_pages(bp, PAGES)
