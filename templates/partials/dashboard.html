@@ -20,7 +20,8 @@
 
 			<!-- HTMX SSE connection - this is where the magic happens -->
 			<div>
-				<div id="sensor-display" sse-swap="sensor_update" hx-swap="innerHTML">
+				<div id="sensor-display" sse-swap="sensor_update" hx-swap="innerHTML"
+					hx-swap="innerHTML">
 					<div class="flex items-center justify-center py-8">
 						<div class="loading loading-spinner loading-lg text-primary"></div>
 						<span class="ml-4">Connecting to sensors...</span>

@@ -1,44 +1,4 @@
 let tempChart, humidityChart;
-// Handle real-time sensor updates
-document.body.addEventListener('htmx:sseMessage', function(e) {
-	if (e.detail.type === 'sensor_update') {
-		const data = JSON.parse(e.detail.data);
-
-		// Update the display with new data
-		const statusClass = data.status === 'normal' ? 'badge-success' :
-			data.status === 'warning' ? 'badge-warning' : 'badge-error';
-
-		const html = `
-	<div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
-		<div class="stat bg-primary/10 rounded-lg p-4">
-			<div class="stat-title">Temperature</div>
-			<div class="stat-value text-primary">${data.temperature}°C</div>
-			<div class="stat-desc">Real-time reading</div>
-		</div>
-		<div class="stat bg-secondary/10 rounded-lg p-4">
-			<div class="stat-title">Humidity</div>
-			<div class="stat-value text-secondary">${data.humidity}%</div>
-			<div class="stat-desc">Relative humidity</div>
-		</div>
-	</div>
-	<div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2">
-		<div class="badge ${statusClass} text-white font-bold">
-			${data.status.toUpperCase()}
-		</div>
-		<div class="text-sm text-base-content/60">
-			${new Date(data.timestamp).toLocaleTimeString()}
-		</div>
-	</div>
-	`;
-
-		document.getElementById('sensor-display').innerHTML = html;
-
-		// Show critical alerts (because drama is important)
-		if (data.status === 'critical') {
-			showCriticalAlert(data);
-		}
-	}
-});
 function showCriticalAlert(data) {
 	const alertHtml = `
 	<div role="alert" class="alert alert-error text-white mb-4" id="critical-alert">
@@ -134,11 +94,11 @@ function initCharts(tempData, humidityData, labels) {
 	});
 }
 // Connection status handling
-document.body.addEventListener('htmx:sseOpen', function(e) {
+document.body.addEventListener('htmx:sseOpen', function(_) {
 	document.getElementById('connection-indicator').className = 'loading loading-ring loading-sm text-success';
 	document.getElementById('connection-status').textContent = 'Connected';
 });
-document.body.addEventListener('htmx:sseError', function(e) {
+document.body.addEventListener('htmx:sseError', function(_) {
 	document.getElementById('connection-indicator').className = 'loading loading-ring loading-sm text-error';
 	document.getElementById('connection-status').textContent = 'Connection Error';
 });

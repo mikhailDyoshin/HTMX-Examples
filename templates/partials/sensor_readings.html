@@ -1,0 +1,20 @@
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+	<div class="stat bg-primary/10 rounded-lg p-4">
+		<div class="stat-title">Temperature</div>
+		<div class="stat-value text-primary">{{ data.temperature }}°C</div>
+		<div class="stat-desc">Real-time reading</div>
+	</div>
+	<div class="stat bg-secondary/10 rounded-lg p-4">
+		<div class="stat-title">Humidity</div>
+		<div class="stat-value text-secondary">{{ data.humidity }}%</div>
+		<div class="stat-desc">Relative humidity</div>
+	</div>
+</div>
+<div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2">
+	<div class="badge {{ data.status_style }} text-white font-bold">
+		{{ data.status }}
+	</div>
+	<div class="text-sm text-base-content/60">
+		{{ data.time }}
+	</div>
+</div>

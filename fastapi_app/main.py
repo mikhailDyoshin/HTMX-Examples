@@ -6,10 +6,11 @@ from datetime import datetime
 from fastapi import APIRouter, FastAPI, Request
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
+from flask import request
 from sse_starlette import EventSourceResponse
 from pathlib import Path
 from app.navigation.types import Page
-from fastapi_app.sensor import SensorData, recent_readings
+from fastapi_app.sensor import Sensor, get_sensor_reading, recent_readings
 from .navigation.utils import register_pages
 
 app = FastAPI()
@@ -19,7 +20,7 @@ print(BASE_DIR)
 app.mount("/static", StaticFiles(directory=BASE_DIR / "static"), name="static")
 templates = Jinja2Templates(directory=BASE_DIR / "templates")
 
-sensor = SensorData()
+sensor = Sensor()
 
 PAGES = (
     Page("/", "Home", "/partials/home.html"),
@@ -50,9 +51,15 @@ async def stream_sensor_data():
                 # Generate new sensor reading
                 data = sensor.generate_reading()
                 recent_readings.append(data)  # Store for charts
+                context = {"request": request, "data": get_sensor_reading(data)}
+                template = templates.get_template(
+                    "/partials/sensor_readings.html"
+                ).render(context)
+                clean_html = "".join(template.splitlines())
 
                 # Send to all connected browsers
-                yield {"event": "sensor_update", "data": json.dumps(data)}
+                yield {"event": "sensor_update", "data": clean_html}
+
                 await asyncio.sleep(2)  # Update every 2 seconds
         except asyncio.CancelledError:
             # User closed browser/tab - no drama, just stop
@@ -69,8 +76,8 @@ async def get_chart_data(request: Request):
         for _ in range(20):
             recent_readings.append(sensor.generate_reading())
 
-    temp_data = [r["temperature"] for r in recent_readings]
-    humidity_data = [r["humidity"] for r in recent_readings]
+    temp_data = [r.temperature for r in recent_readings]
+    humidity_data = [r.humidity for r in recent_readings]
     labels = [str(i) for i in range(len(recent_readings))]
 
     return templates.TemplateResponse(
