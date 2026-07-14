@@ -1,0 +1,5 @@
+<div id="toast" hx-trigger="load delay:3s" hx-swap-oob="outerHTML" hx-get="/remove_message"
+	hx-swap="outerHTML swap:500ms">
+	{% set data = message.data %}
+	{% include message.template %}
+</div>

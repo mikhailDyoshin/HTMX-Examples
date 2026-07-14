@@ -9,6 +9,7 @@ from flask import request
 from sse_starlette import EventSourceResponse
 from pathlib import Path
 from app.navigation.types import Page
+from app.view import View
 from fastapi_app.sensor import Sensor, get_sensor_reading, recent_readings
 from fastapi_app.status import Status
 from .navigation.utils import register_pages
@@ -31,17 +32,6 @@ register_pages(router, PAGES, templates)
 app.include_router(router=router)
 
 
-# # Hot reload magic for development (because restarting servers is for losers)
-# if os.getenv("DEBUG"):
-#     hot_reload = arel.HotReload(paths=["."])
-#     app.add_websocket_route("/hot-reload", route=hot_reload)
-#     app.add_event_handler("startup", hot_reload.startup)
-#     app.add_event_handler("shutdown", hot_reload.shutdown)
-#     templates.env.globals["DEBUG"] = True
-#     templates.env.globals["hot_reload"] = hot_reload
-#
-
-
 @app.get("/stream")
 async def stream_sensor_data():
     """The magic streaming endpoint that makes everything work"""
@@ -59,11 +49,12 @@ async def stream_sensor_data():
                 clean_html = "".join(template.splitlines())
 
                 if data.status is Status.CRITICAL:
-                    critical_message_template = templates.get_template(
-                        "/dashboard/critical_alert.html"
-                    ).render(context)
-                    clean_message = "".join(critical_message_template.splitlines())
-                    clean_html += clean_message
+                    message = {
+                        "request": request,
+                        "message": View(data, "/dashboard/critical_alert.html"),
+                    }
+                    clean_toast = "".join(render_toast(message).splitlines())
+                    clean_html += clean_toast
 
                 # Send to all connected browsers
                 yield {"event": "sensor_update", "data": clean_html}
@@ -108,3 +99,7 @@ async def health_check():
 @app.get("/remove_message", response_class=HTMLResponse)
 async def remove_message():
     return templates.get_template("/partials/toast.html").render()
+
+
+def render_toast(context: dict) -> str:
+    return templates.get_template("/partials/toast_message.html").render(context)
