@@ -1,0 +1,24 @@
+<!-- Charts side by side -->
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+	<div class="card bg-base-100 shadow-xl">
+		<div class="card-body">
+			<h3 class="card-title">Temperature Trend</h3>
+			<div class="h-48">
+				<canvas id="tempChart"></canvas>
+			</div>
+		</div>
+	</div>
+
+	<div class="card bg-base-100 shadow-xl">
+		<div class="card-body">
+			<h3 class="card-title">Humidity Trend</h3>
+			<div class="h-48">
+				<canvas id="humidityChart"></canvas>
+			</div>
+		</div>
+	</div>
+</div>
+<!-- Hidden chart data updater -->
+<div hx-get="/chart-data" hx-trigger="sse:sensor_update" hx-target="#chart-data" hx-swap="outerHTML">
+	<div id="chart-data"></div>
+</div>

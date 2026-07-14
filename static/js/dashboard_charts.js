@@ -1,4 +1,17 @@
-let tempChart, humidityChart;
+
+
+
+// Connection status handling
+document.body.addEventListener('htmx:sseOpen', function(_) {
+	document.getElementById('connection-indicator').className = 'loading loading-ring loading-sm text-success';
+	document.getElementById('connection-status').textContent = 'Connected';
+});
+document.body.addEventListener('htmx:sseError', function(_) {
+	document.getElementById('connection-indicator').className = 'loading loading-ring loading-sm text-error';
+	document.getElementById('connection-status').textContent = 'Connection Error';
+});
+
+
 function showCriticalAlert(data) {
 	const alertHtml = `
 	<div role="alert" class="alert alert-error text-white mb-4" id="critical-alert">
@@ -16,35 +29,51 @@ function showCriticalAlert(data) {
 		}, 10000); // Auto-dismiss after 10 seconds
 	}
 }
-// Update charts when new data arrives
-document.body.addEventListener('htmx:afterSwap', function(e) {
-	if (e.target.id === 'chart-data') {
-		const dataElement = e.target.querySelector('[data-temp]') || e.target;
 
-		if (dataElement.dataset.temp) {
-			const tempData = JSON.parse(dataElement.dataset.temp);
-			const humidityData = JSON.parse(dataElement.dataset.humidity);
-			const labels = JSON.parse(dataElement.dataset.labels);
+launchScripts()
 
-			if (tempChart && humidityChart) {
-				// Update existing charts
-				tempChart.data.datasets[0].data = tempData;
-				tempChart.data.labels = labels;
-				tempChart.update('none'); // No animation for smooth updates
+function launchScripts() {
 
-				humidityChart.data.datasets[0].data = humidityData;
-				humidityChart.data.labels = labels;
-				humidityChart.update('none');
-			} else {
-				// Create charts for the first time
-				initCharts(tempData, humidityData, labels);
+	let tempChart, humidityChart;
+
+
+	// Update charts when new data arrives
+	document.body.addEventListener('htmx:afterSwap', function(e) {
+		if (e.target.id === 'chart-data') {
+			const dataElement = e.target.querySelector('[data-temp]') || e.target;
+
+			if (dataElement.dataset.temp) {
+				const tempData = JSON.parse(dataElement.dataset.temp);
+				const humidityData = JSON.parse(dataElement.dataset.humidity);
+				const labels = JSON.parse(dataElement.dataset.labels);
+
+				if (tempChart && humidityChart) {
+					// Update existing charts
+					tempChart.data.datasets[0].data = tempData;
+					tempChart.data.labels = labels;
+					tempChart.update('none'); // No animation for smooth updates
+
+					humidityChart.data.datasets[0].data = humidityData;
+					humidityChart.data.labels = labels;
+					humidityChart.update('none');
+
+
+				} else {
+					// Create charts for the first time
+					const charts = initCharts(tempData, humidityData, labels);
+					tempChart = charts.tempChart;
+					humidityChart = charts.humidityChart;
+					console.log("Charts created")
+				}
 			}
 		}
-	}
-});
+	});
+}
+
+
 function initCharts(tempData, humidityData, labels) {
 	const tempCtx = document.getElementById('tempChart').getContext('2d');
-	tempChart = new Chart(tempCtx, {
+	const tempChart = new Chart(tempCtx, {
 		type: 'line',
 		data: {
 			labels: labels,
@@ -69,7 +98,7 @@ function initCharts(tempData, humidityData, labels) {
 	});
 
 	const humidityCtx = document.getElementById('humidityChart').getContext('2d');
-	humidityChart = new Chart(humidityCtx, {
+	const humidityChart = new Chart(humidityCtx, {
 		type: 'line',
 		data: {
 			labels: labels,
@@ -92,13 +121,6 @@ function initCharts(tempData, humidityData, labels) {
 			}
 		}
 	});
+	return { tempChart, humidityChart }
 }
-// Connection status handling
-document.body.addEventListener('htmx:sseOpen', function(_) {
-	document.getElementById('connection-indicator').className = 'loading loading-ring loading-sm text-success';
-	document.getElementById('connection-status').textContent = 'Connected';
-});
-document.body.addEventListener('htmx:sseError', function(_) {
-	document.getElementById('connection-indicator').className = 'loading loading-ring loading-sm text-error';
-	document.getElementById('connection-status').textContent = 'Connection Error';
-});
+

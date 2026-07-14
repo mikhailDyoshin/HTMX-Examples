@@ -1,7 +1,5 @@
-import os
 import asyncio
 import json
-import arel
 from datetime import datetime
 from fastapi import APIRouter, FastAPI, Request
 from fastapi.staticfiles import StaticFiles
@@ -24,21 +22,22 @@ sensor = Sensor()
 
 PAGES = (
     Page("/", "Home", "/partials/home.html"),
-    Page("/dashboard", "Dashboard", "partials/dashboard.html"),
+    Page("/dashboard", "Dashboard", "dashboard/dashboard.html"),
 )
 register_pages(router, PAGES, templates)
 
 app.include_router(router=router)
 
 
-# Hot reload magic for development (because restarting servers is for losers)
-if os.getenv("DEBUG"):
-    hot_reload = arel.HotReload(paths=["."])
-    app.add_websocket_route("/hot-reload", route=hot_reload)
-    app.add_event_handler("startup", hot_reload.startup)
-    app.add_event_handler("shutdown", hot_reload.shutdown)
-    templates.env.globals["DEBUG"] = True
-    templates.env.globals["hot_reload"] = hot_reload
+# # Hot reload magic for development (because restarting servers is for losers)
+# if os.getenv("DEBUG"):
+#     hot_reload = arel.HotReload(paths=["."])
+#     app.add_websocket_route("/hot-reload", route=hot_reload)
+#     app.add_event_handler("startup", hot_reload.startup)
+#     app.add_event_handler("shutdown", hot_reload.shutdown)
+#     templates.env.globals["DEBUG"] = True
+#     templates.env.globals["hot_reload"] = hot_reload
+#
 
 
 @app.get("/stream")
@@ -53,7 +52,7 @@ async def stream_sensor_data():
                 recent_readings.append(data)  # Store for charts
                 context = {"request": request, "data": get_sensor_reading(data)}
                 template = templates.get_template(
-                    "/partials/sensor_readings.html"
+                    "/dashboard/sensor_readings.html"
                 ).render(context)
                 clean_html = "".join(template.splitlines())
 
@@ -81,7 +80,7 @@ async def get_chart_data(request: Request):
     labels = [str(i) for i in range(len(recent_readings))]
 
     return templates.TemplateResponse(
-        "/partials/chart_data.html",
+        "/dashboard/chart_data.html",
         {
             "request": request,
             "temp_data": json.dumps(temp_data),

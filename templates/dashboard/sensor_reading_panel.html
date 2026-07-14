@@ -1,0 +1,19 @@
+<!-- Live sensor data (the magic happens here) -->
+<div class="card bg-base-100 shadow-xl mb-6">
+	<div class="card-body">
+		<div class="flex items-center gap-2 mb-4">
+			<div class="badge badge-primary">Live</div>
+			<h2 class="card-title">Sensor Readings</h2>
+		</div>
+
+		<!-- HTMX SSE connection - this is where the magic happens -->
+		<div>
+			<div id="sensor-display" sse-swap="sensor_update" hx-swap="innerHTML" hx-swap="innerHTML">
+				<div class="flex items-center justify-center py-8">
+					<div class="loading loading-spinner loading-lg text-primary"></div>
+					<span class="ml-4">Connecting to sensors...</span>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
