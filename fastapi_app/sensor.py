@@ -3,7 +3,7 @@ from dataclasses import dataclass
 import random
 from datetime import datetime
 
-from fastapi_app.status import get_status, get_style
+from fastapi_app.status import Status, get_status, get_style
 
 
 @dataclass(frozen=True)
@@ -11,6 +11,7 @@ class SensorData:
     time: datetime
     temperature: float
     humidity: float
+    status: Status
 
 
 @dataclass(frozen=True)
@@ -23,14 +24,13 @@ class SensorReading:
 
 
 def get_sensor_reading(data: SensorData) -> SensorReading:
-    status = get_status()
 
     return SensorReading(
         time=data.time.strftime("%H:%M:%S"),
         temperature=str(data.temperature),
         humidity=str(data.humidity),
-        status=status.upper(),
-        status_style=get_style(status),
+        status=data.status.upper(),
+        status_style=get_style(data.status),
     )
 
 
@@ -47,6 +47,7 @@ class Sensor:
             time=datetime.now(),
             temperature=round(random.uniform(self.min_temp, self.max_temp), 1),
             humidity=round(random.uniform(self.min_humidity, self.max_humidity), 1),
+            status=get_status(),
         )
 
 

@@ -2,6 +2,7 @@ import asyncio
 import json
 from datetime import datetime
 from fastapi import APIRouter, FastAPI, Request
+from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from flask import request
@@ -9,6 +10,7 @@ from sse_starlette import EventSourceResponse
 from pathlib import Path
 from app.navigation.types import Page
 from fastapi_app.sensor import Sensor, get_sensor_reading, recent_readings
+from fastapi_app.status import Status
 from .navigation.utils import register_pages
 
 app = FastAPI()
@@ -56,6 +58,13 @@ async def stream_sensor_data():
                 ).render(context)
                 clean_html = "".join(template.splitlines())
 
+                if data.status is Status.CRITICAL:
+                    critical_message_template = templates.get_template(
+                        "/dashboard/critical_alert.html"
+                    ).render(context)
+                    clean_message = "".join(critical_message_template.splitlines())
+                    clean_html += clean_message
+
                 # Send to all connected browsers
                 yield {"event": "sensor_update", "data": clean_html}
 
@@ -94,3 +103,8 @@ async def get_chart_data(request: Request):
 async def health_check():
     """Because production servers need to know we're alive"""
     return {"status": "alive_and_kicking", "timestamp": datetime.now().isoformat()}
+
+
+@app.get("/remove_message", response_class=HTMLResponse)
+async def remove_message():
+    return """<div id="toast"></div>"""
