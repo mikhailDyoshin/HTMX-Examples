@@ -107,4 +107,4 @@ async def health_check():
 
 @app.get("/remove_message", response_class=HTMLResponse)
 async def remove_message():
-    return """<div id="toast"></div>"""
+    return templates.get_template("/partials/toast.html").render()

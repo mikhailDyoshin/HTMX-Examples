@@ -21,7 +21,9 @@
 <body>
 	<div id="app" class="app">
 		{% block page %}{% endblock %}
-		<div id="toast"></div>
+		<div class="toast-container">
+		{% include "partials/toast.html" %}
+		</div>
 	</div>
 </body>
 </html>

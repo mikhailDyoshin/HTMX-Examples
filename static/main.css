@@ -60,3 +60,30 @@ body {
 	overflow-y: auto;
 	scrollbar-gutter: stable;
 }
+
+.toast-container {
+	position: fixed;
+	bottom: 20px;
+	right: 20px;
+	display: flex;
+	flex-direction: column;
+	gap: 0.5rem;
+	z-index: 9999;
+	opacity: 1;
+	transform: translateY(0);
+}
+
+#toast {
+	opacity: 1;
+	transition: opacity .5s ease, transform .5s ease;
+}
+
+.toast-message.htmx-settling {
+	opacity: 1;
+	transform: translateY(0);
+}
+
+#toast.htmx-swapping {
+	opacity: 0;
+	transform: translateY(10px);
+}
