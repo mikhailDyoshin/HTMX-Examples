@@ -5,5 +5,6 @@ from dataclasses import dataclass
 class Page:
     url: str
     title: str
+    route_name: str
     template: str
     context: object = None

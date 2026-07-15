@@ -2,7 +2,22 @@ from collections.abc import Callable
 
 from fastapi import APIRouter, Request
 from fastapi.responses import HTMLResponse
+from fastapi.templating import Jinja2Templates
 from app.navigation.types import Page
+from fastapi_app.templates import templates
+
+
+router = APIRouter()
+
+PAGES = (
+    Page(url="/", title="Home", route_name="home", template="/partials/home.html"),
+    Page(
+        url="/dashboard",
+        title="Dashboard",
+        route_name="dashboard",
+        template="dashboard/dashboard.html",
+    ),
+)
 
 
 def _is_hx_request(request: Request) -> bool:
@@ -13,7 +28,7 @@ def _navigation_oob_template(
     request: Request,
     page: Page,
     pages: tuple[Page, ...],
-    templates,
+    templates: Jinja2Templates,
 ) -> str:
     return templates.get_template("navigation/navigation_oob.html").render(
         request=request,
@@ -71,8 +86,7 @@ def _page_view(
     return view
 
 
-def register_pages(
-    router: APIRouter,
+def _register_pages(
     pages: tuple[Page, ...],
     templates,
 ) -> None:
@@ -81,6 +95,9 @@ def register_pages(
             page.url,
             _page_view(page, pages, templates),
             methods=["GET"],
-            name=page.title.lower(),
+            name=page.route_name.lower(),
             response_class=HTMLResponse,
         )
+
+
+_register_pages(PAGES, templates)
