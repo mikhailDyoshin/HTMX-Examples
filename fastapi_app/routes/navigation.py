@@ -17,6 +17,12 @@ PAGES = (
         route_name="dashboard",
         template="dashboard/dashboard.html",
     ),
+    Page(
+        url="/search",
+        title="Search",
+        route_name="search",
+        template="search/search.html",
+    ),
 )
 
 
