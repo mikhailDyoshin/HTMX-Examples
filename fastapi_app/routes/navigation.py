@@ -23,6 +23,12 @@ PAGES = (
         route_name="search",
         template="search/search.html",
     ),
+    Page(
+        url="/infinite_scroll",
+        title="Infinite Scroll",
+        route_name="infinite_scroll",
+        template="infinite_scroll/list.html",
+    ),
 )
 
 

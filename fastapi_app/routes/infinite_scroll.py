@@ -1,17 +1,17 @@
 from dataclasses import dataclass
+from fastapi import APIRouter, Request, Query
+from fastapi_app.templates import templates
 
-from flask import Blueprint, render_template, request
 
+router = APIRouter(prefix="/scroll")
 
-bp = Blueprint("infinite_scroll", __name__, url_prefix="/scroll")
-
-data = [i for i in range(0, 50)]
+data = [i for i in range(0, 200)]
 PAGE_SIZE = 20
 
 
 def listener(page: int) -> dict[str, str]:
     return {
-        "hx-get": f"/scroll/get/?page={page}",
+        "hx-get": f"/scroll/get?page={page}",
         "hx-trigger": "intersect once",
         "hx-swap": "afterend",
     }
@@ -45,18 +45,18 @@ def create_page(page: int) -> list[Item]:
     ]
 
 
-def render_page(page: int) -> str:
-    items = create_page(page)
-    return render_template("infinite_scroll/bulk.html", items=items)
+def render_page(request: Request, page: int):
+    return templates.TemplateResponse(
+        "infinite_scroll/bulk.html", {"request": request, "items": create_page(page)}
+    )
 
 
-@bp.get("/load")
-def load_list():
-    return render_page(0)
+@router.get("/load")
+async def load_list(request: Request):
+    return render_page(request, 0)
 
 
-@bp.route("/get")
-def get_page():
-    current_page = int(request.args.get("page", 0))
-    next_page = current_page + 1
-    return render_page(next_page)
+@router.get("/get")
+async def get_page(request: Request, page: int = Query(0)):
+    next_page = page + 1
+    return render_page(request, next_page)
