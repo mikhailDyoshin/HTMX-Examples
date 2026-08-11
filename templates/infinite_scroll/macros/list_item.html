@@ -1,5 +1,5 @@
 {% macro list_item(data) %}
-<div class="list_item" {% if data.attrs %}{% for key, value in data.attrs.items() %} {{ key }}="{{ value }}" {% endfor
+<div class="my_list_item" {% if data.attrs %}{% for key, value in data.attrs.items() %} {{ key }}="{{ value }}" {% endfor
 	%}{% endif %}>
 	<h3>{{ data.title }}</h3>
 	<p>{{ data.content }}</p>
